@@ -38,7 +38,8 @@ class UpdateDatabase(HTMLParser):
 		self.database_connection.execute("DROP TABLE IF EXISTS {table_name}".format(table_name = self.table_name))
 		self.database_connection.execute("CREATE TABLE IF NOT EXISTS {table_name} (Primary_Key TEXT PRIMARY KEY, Timestamp DATETIME, Message TEXT)".format(table_name = self.table_name))
 		for key in self.compiled_data.keys():
-			self.database_connection.execute("INSERT INTO {table_name} (Primary_Key, Timestamp, Message) VALUES(?, ?, ?)".format(table_name = self.table_name), (key, today.isoformat(" "), self.compiled_data[key]))
+			if int(key[0 : key.find(" ")]) >= int(today.day):
+				self.database_connection.execute("INSERT INTO {table_name} (Primary_Key, Timestamp, Message) VALUES(?, ?, ?)".format(table_name = self.table_name), (key, today.isoformat(" "), self.compiled_data[key]))
 		
 
 
