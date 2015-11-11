@@ -24,6 +24,10 @@ def generateAuthorizationCode(username, password):
 	encoded_bytes = base64.b64encode(auth_code)
 	return ("Basic " + bytes.decode(encoded_bytes))
 
+def getTodayString():
+	today = datetime.today()
+	return today.strftime("%d %b %Y (%A):")
+
 if __name__ == "__main__":
 
 	credentials_confirmed = False
@@ -46,13 +50,30 @@ if __name__ == "__main__":
 	sql_location = Constants.DATABASE_NAME
 	conn = sqlite3.connect(sql_location)
 	c = conn.cursor()
+	take = True
+	while take is True:
+		# create and update the tables
+		for i in range(Constants.STARTING_ROOM_NUMBER, Constants.ENDING_ROOM_NUMBER + 1):
+			table_name = Constants.TABLE_NAME_HEADER + str(i)
+			# update the tables
+			UpdateDatabase(c, generateUrl(i), table_name, username, password)
 
-	# create and update the tables
-	for i in range(Constants.STARTING_ROOM_NUMBER, Constants.ENDING_ROOM_NUMBER + 1):
-		table_name = Constants.TABLE_NAME_HEADER + str(i)
-		# update the tables
-		
-		UpdateDatabase(c, generateUrl(i), table_name, username, password)
+		# get user input
+		command = input("Enter a command (type 'help' for command options):")
+		if command == "help":
+			print(command)
+		elif command == "today":
+			c.execute("SELECT Message FROM {table_name} WHERE Primary_Key is '{today}'".format(table_name = "Room_1", today = getTodayString()))
+			today = list((c.fetchone()[0]).split("\n"))
+			print("Todays bookings")
+			for booking in today:
+				print("-------------------------------")
+				print(booking)
+				print("-------------------------------")
+		elif command == "quit":
+			take = False
+		else:
+			print("No such command '" + command + "' found")
 
 	# Committing changes and closing the connection to the database file
 	conn.commit()
