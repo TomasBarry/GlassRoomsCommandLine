@@ -15,18 +15,17 @@ from urllib import request, error
 	and then update the database tables by calling the UpdateDatabase class
 """
 
-def generateUrl(room_number):
-	return Constants.URL_HEADER + str(room_number) + Constants.URL_ENDER 
-
 
 def generateAuthorizationCode(username, password):
 	auth_code = str.encode(username + ":" + password)
 	encoded_bytes = base64.b64encode(auth_code)
 	return ("Basic " + bytes.decode(encoded_bytes))
 
+
 def getTodayString():
 	today = datetime.today()
 	return today.strftime("%d %b %Y (%A):")
+
 
 if __name__ == "__main__":
 
@@ -39,7 +38,7 @@ if __name__ == "__main__":
 		password = getpass.getpass("Enter your password: ")
 
 		try:
-			fetch_request = request.Request(generateUrl(1))
+			fetch_request = request.Request(Constants.URL_HEADER + str(1) + Constants.URL_ENDER )
 			added_header = fetch_request.add_header("Authorization", generateAuthorizationCode(username, password))
 			contents = request.urlopen(fetch_request)
 			credentials_confirmed = True
@@ -50,31 +49,45 @@ if __name__ == "__main__":
 	sql_location = Constants.DATABASE_NAME
 	conn = sqlite3.connect(sql_location)
 	c = conn.cursor()
+
+	UpdateDatabase(c, Constants.TABLE_NAME, username, password)
+	# Committing changes and closing the connection to the database file
+	conn.commit()
+	conn.close()
+
+	today = datetime.now()
 	take = True
 	while take is True:
-		# create and update the tables
-		for i in range(Constants.STARTING_ROOM_NUMBER, Constants.ENDING_ROOM_NUMBER + 1):
-			table_name = Constants.TABLE_NAME_HEADER + str(i)
-			# update the tables
-			UpdateDatabase(c, generateUrl(i), table_name, username, password)
-
 		# get user input
-		command = input("Enter a command (type 'help' for command options):")
-		if command == "help":
+		command = (input("Enter a command (type 'help' for command options):")).lower()
+
+		if command == "update":
+			conn = sqlite3.connect(sql_location)
+			c = conn.cursor()
+			UpdateDatabase(c, Constants.TABLE_NAME, username, password)
+			# Committing changes and closing the connection to the database file
+			conn.commit()
+			conn.close()
+			print("Updated database")
+
+		elif command == "help":
 			print(command)
+
 		elif command == "today":
-			c.execute("SELECT Message FROM {table_name} WHERE Primary_Key is '{today}'".format(table_name = "Room_1", today = getTodayString()))
-			today = list((c.fetchone()[0]).split("\n"))
-			print("Todays bookings")
-			for booking in today:
-				print("-------------------------------")
-				print(booking)
-				print("-------------------------------")
+			room = (input("What Room?")).lower()
+			conn = sqlite3.connect(sql_location)
+			c = conn.cursor()
+			if room == "all":
+				c.execute("SELECT Room, StartTime, EndTime, Message FROM {table_name} WHERE Date = {today}".format(table_name = Constants.TABLE_NAME, today = today.day))
+			else:
+				c.execute("SELECT Room, StartTime, EndTime, Message FROM {table_name} WHERE Date = {today} AND Room = {room_number}".format(table_name = Constants.TABLE_NAME, today = today.day, room_number = room))	
+			for booking in c.fetchall():
+				print("| Room: " + booking[0] + " | From: " + booking[1] + " | To " + booking[2] + " | - booked")
+			# Committing changes and closing the connection to the database file
+			conn.commit()
+			conn.close()
+
 		elif command == "quit":
 			take = False
 		else:
 			print("No such command '" + command + "' found")
-
-	# Committing changes and closing the connection to the database file
-	conn.commit()
-	conn.close()

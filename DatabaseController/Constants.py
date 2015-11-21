@@ -2,6 +2,7 @@ DATABASE_NAME = "glass_rooms.sqlite"
 STARTING_ROOM_NUMBER = 1
 ENDING_ROOM_NUMBER = 9
 TABLE_NAME_HEADER = "Room_"
+TABLE_NAME = "Bookings"
 URL_HEADER = "https://www.scss.tcd.ie/cgi-bin/webcal/sgmr/sgmr"
 URL_ENDER = ".pl"
 
