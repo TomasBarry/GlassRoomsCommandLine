@@ -5,6 +5,7 @@ TABLE_NAME_HEADER = "Room_"
 TABLE_NAME = "Bookings"
 URL_HEADER = "https://www.scss.tcd.ie/cgi-bin/webcal/sgmr/sgmr"
 URL_ENDER = ".pl"
+URL_BOOKING = ".request"
 
 # Regex Constants
 # DATE_HEADER_REGEX: regex to match '4 Nov 2015 (Wednesday):'

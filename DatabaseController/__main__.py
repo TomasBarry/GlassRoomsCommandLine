@@ -15,6 +15,18 @@ from urllib import request, error
 	and then update the database tables by calling the UpdateDatabase class
 """
 
+def generateBookingRequest(start_time, end_time, name, status, date, month, year):
+	#return {
+	#	"StartTime" : start_time,
+	#	"EndTime" : end_time,
+	#	"FullName" : name,
+	#	"Status" : status,
+	#	"StartDate" : date,
+	#	"StartMonth" : month,
+	#	"StartYear" : year
+	#}
+	return str.encode("StartTime={0}&EndTime={1}&Fullname={2}&Status={3}&StartDate={4}&StartMonth={5}&StartYear={6}".format((int(start_time) + 1), (int(end_time) + 1), name, status, date, month, year))
+
 
 def generateAuthorizationCode(username, password):
 	auth_code = str.encode(username + ":" + password)
@@ -86,6 +98,20 @@ if __name__ == "__main__":
 			# Committing changes and closing the connection to the database file
 			conn.commit()
 			conn.close()
+
+		elif command == "book":
+			room = (input("What Room?")).lower()
+			start_time = input("From:")
+			end_time = input("To:")
+			name = input("What is your first name?")
+			status = "ba3"
+			date = input("Day:")
+			month = input("Month:")
+			year = "1"
+			print(Constants.URL_HEADER + str(room) + Constants.URL_BOOKING + Constants.URL_ENDER)
+			fetch_request = request.Request(Constants.URL_HEADER + str(room) + Constants.URL_BOOKING + Constants.URL_ENDER, data = generateBookingRequest(start_time, end_time, name, status, date, month, year))
+			added_header = fetch_request.add_header("Authorization", generateAuthorizationCode(username, password))
+			contents = request.urlopen(fetch_request)
 
 		elif command == "quit":
 			take = False
