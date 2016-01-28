@@ -1,4 +1,5 @@
 import os
+import sys
 import getpass
 import sqlite3
 import Constants
@@ -40,6 +41,13 @@ def getTodayString():
 
 
 if __name__ == "__main__":
+	
+	if len(sys.argv) is not 1:
+		fetch_request = request.Request(Constants.URL_HEADER + str(sys.argv[1]) + Constants.URL_BOOKING + Constants.URL_ENDER, 
+			data = generateBookingRequest(sys.argv[2], sys.argv[3], sys.argv[4], sys.argv[5], sys.argv[6], sys.argv[7], sys.argv[8]))
+		added_header = fetch_request.add_header("Authorization", generateAuthorizationCode(sys.argv[9], sys.argv[10]))
+		contents = request.urlopen(fetch_request)
+		
 
 	credentials_confirmed = False
 
@@ -108,7 +116,6 @@ if __name__ == "__main__":
 			date = input("Day:")
 			month = input("Month:")
 			year = "1"
-			print(Constants.URL_HEADER + str(room) + Constants.URL_BOOKING + Constants.URL_ENDER)
 			fetch_request = request.Request(Constants.URL_HEADER + str(room) + Constants.URL_BOOKING + Constants.URL_ENDER, data = generateBookingRequest(start_time, end_time, name, status, date, month, year))
 			added_header = fetch_request.add_header("Authorization", generateAuthorizationCode(username, password))
 			contents = request.urlopen(fetch_request)
