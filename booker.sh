@@ -1,7 +1,5 @@
 #!/bin/sh
 
-# Script to be run as a cron job
-
 # This is the code segment that is run inside __main__.py
 
 #if len(sys.argv) is not 1:
@@ -20,19 +18,12 @@ USER='#TODO: SCSS user name here'
 PASS='#TODO: SCSS password here'
 STATUS='ba3'
 
-# book_room
-#
-# run the command that will send the request to book a room
-# param $1: start_time
-# param $2: end_time
-# param $3: start_date
-# param $4: start_month
 book_room () {
 	# for each room with preference
 	for i in 3 5 6 7 8 2 1 9 4
 	do
 		# python package_name room start_time end_time full_name status start_date start_month start_year(always 1) user_name password
-		python3 DatabaseController/ $i $1 $2 $NAME $STATUS $3 $4 $YEAR $USER $PASS
+		python3 ~/GlassRoomsCommandLine/DatabaseController/ $i $1 $2 $NAME $STATUS $3 $4 $YEAR $USER $PASS
 	done
 	exit
 }
@@ -78,12 +69,26 @@ case $DAY in
 		;;
 	# if Friday, book for Monday at 15-17, 15-16 or 116-17
 	5)
-		if [ $HOUR = 20 ]
+		if [ $HOUR = 14 ]
 			then
 			book_room 12 14 $(date +%-d -d "+3 days") $(date +%-m -d "+3 days");
 			book_room 12 13 $(date +%-d -d "+3 days") $(date +%-m -d "+3 days");
 			book_room 13 14 $(date +%-d -d "+3 days") $(date +%-m -d "+3 days");
 		fi
+		exit 1
+		;;
+	# it's the weekend, book Monday
+	6)
+		book_room 12 14 $(date +%-d -d "+2 days") $(date +%-m -d "+2 days");
+		book_room 12 13 $(date +%-d -d "+2 days") $(date +%-m -d "+2 days");
+		book_room 13 14 $(date +%-d -d "+2 days") $(date +%-m -d "+2 days");
+		exit 1
+		;;
+	# it's the weekend, book Monday
+	7)
+		book_room 12 14 $(date +%-d -d "+1 days") $(date +%-m -d "+1 days");
+		book_room 12 13 $(date +%-d -d "+1 days") $(date +%-m -d "+1 days");
+		book_room 13 14 $(date +%-d -d "+1 days") $(date +%-m -d "+1 days");
 		exit 1
 		;;
 esac
