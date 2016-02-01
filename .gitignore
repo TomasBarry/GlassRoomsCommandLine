@@ -56,5 +56,5 @@ docs/_build/
 # PyBuilder
 target/
 
-# Shell script
-autoBook.sh
+# User name and password
+user_and_password.config
