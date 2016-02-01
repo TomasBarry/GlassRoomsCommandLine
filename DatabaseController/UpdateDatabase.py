@@ -11,7 +11,7 @@ class UpdateDatabase(HTMLParser):
 
 	def __init__(self, database_connection, table_name, username, password):
 		super(UpdateDatabase, self).__init__(convert_charrefs="True")
-		
+
 		self.database_connection = database_connection
 		self.table_name = table_name
 		self.username = username
@@ -23,10 +23,9 @@ class UpdateDatabase(HTMLParser):
 
 		self.database_connection.execute("DROP TABLE IF EXISTS {table_name}".format(table_name = self.table_name))
 		self.database_connection.execute("CREATE TABLE IF NOT EXISTS {table_name} (Primary_Key TEXT PRIMARY KEY, Room TEXT, Date TEXT, StartTime TEXT, EndTime TEXT, Message TEXT)".format(table_name = self.table_name))
-
 		for i in range(Constants.STARTING_ROOM_NUMBER, Constants.ENDING_ROOM_NUMBER + 1):
-			url = Constants.URL_HEADER + str(i) + Constants.URL_ENDER 
-			
+			url = Constants.URL_HEADER + str(i) + Constants.URL_ENDER
+
 			# dict that will be used when outputting to the db
 			self.compiled_data = {}
 			self.latest_key = []
