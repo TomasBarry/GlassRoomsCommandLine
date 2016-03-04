@@ -17,6 +17,9 @@ YEAR=1
 # where the User, user name and password are stored
 source ~/GlassRoomsCommandLine/user_and_password.config
 
+PROFILENAME=$NAME
+PROFILEUSER=$USER
+PROFILEPASS=$PASS
 STATUS='ba3'
 
 book_room () {
@@ -24,8 +27,8 @@ book_room () {
 	for i in 3 5 6 7 8 2 1 9 4
 	do
 		# python package_name room start_time end_time full_name status start_date start_month start_year(always 1) user_name password
-		python3 ~/GlassRoomsCommandLine/DatabaseController/ $i $1 $2 $NAME $STATUS $3 $4 $YEAR $USER $PASS
-		echo ~/GlassRoomsCommandLine/DatabaseController/ $i $1 $2 $NAME $STATUS $3 $4 $YEAR $USER $PASS
+		python3 ~/GlassRoomsCommandLine/DatabaseController/ $i $1 $2 $#PROFILENAME $STATUS $3 $4 $YEAR $PROFILEUSER $PROFILEPASS
+		echo ~/GlassRoomsCommandLine/DatabaseController/ $i $1 $2 $PROFILENAME $STATUS $3 $4 $YEAR $PROFILEUSER $PROFILEPASS
 	done
 }
 
@@ -50,7 +53,7 @@ case $DAY in
 		;;
 	# if Wednesday, book for Thursday at 12-14, 12-13 or 13-14
 	3)
-		if [$HOUR = 16 ]
+		if [ $HOUR = 11 ]
 			then
 			book_room 12 14 $(date +%-d -d "+1 days") $(date +%-m -d "+1 days");
 			book_room 12 13 $(date +%-d -d "+1 days") $(date +%-m -d "+1 days");
@@ -68,13 +71,13 @@ case $DAY in
 		fi
 		exit 1
 		;;
-	# if Friday, book for Monday at 15-17, 15-16 or 116-17
+	# if Friday, book for Monday at 15-17, 15-16 or 16-17
 	5)
 		if [ $HOUR = 14 ]
 			then
-			book_room 12 14 $(date +%-d -d "+3 days") $(date +%-m -d "+3 days");
-			book_room 12 13 $(date +%-d -d "+3 days") $(date +%-m -d "+3 days");
-			book_room 13 14 $(date +%-d -d "+3 days") $(date +%-m -d "+3 days");
+			book_room 15 17 $(date +%-d -d "+3 days") $(date +%-m -d "+3 days");
+			book_room 15 16 $(date +%-d -d "+3 days") $(date +%-m -d "+3 days");
+			book_room 16 17 $(date +%-d -d "+3 days") $(date +%-m -d "+3 days");
 		fi
 		exit 1
 		;;
